@@ -1,12 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:list_show/main.dart';
+import 'package:list_show/screens/show_pdf_file.dart';
 
 class DataTablePaginationExample extends StatelessWidget {
-  var tableRow = new TableRow();
+  DataTablePaginationExample({super.key});
+
+  void showPdf(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (ctx) => ShowPdfFile(
+            url:
+                'https://easyofficesoftware.com/public/catalogue/catalogue/EASYGST_CATALOGUE.pdf')));
+  }
 
   @override
   Widget build(BuildContext context) {
+    var tableRow = new TableRow(context: context, showpdf: showPdf);
+
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
@@ -18,7 +28,6 @@ class DataTablePaginationExample extends StatelessWidget {
           ),
           body: Container(
             width: double.infinity,
-           
             child: SingleChildScrollView(
               child: PaginatedDataTable(
                 header: Text("Pagination Example"),
@@ -59,6 +68,10 @@ class DataTablePaginationExample extends StatelessWidget {
 }
 
 class TableRow extends DataTableSource {
+  TableRow({required this.context, required this.showpdf});
+  void Function(BuildContext context) showpdf;
+
+  final BuildContext context;
   @override
   DataRow? getRow(int index) {
     return DataRow.byIndex(index: index, cells: [
@@ -67,7 +80,9 @@ class TableRow extends DataTableSource {
       DataCell(Text("Cell $index")),
       DataCell(Text("Cell $index")),
       DataCell(TextButton(
-        onPressed: () {},
+        onPressed: () {
+          showpdf(context);
+        },
         child: Text("Submit"),
       )),
       DataCell(TextButton(
