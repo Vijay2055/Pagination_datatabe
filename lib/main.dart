@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:list_show/screens/data_list.dart';
+
+import 'package:list_show/screens/show_list_data.dart';
 
 final colorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
-  surface: const Color.fromARGB(255, 242, 240, 245),
-  seedColor: const Color.fromARGB(255, 51, 70, 106),
+  surface: const Color.fromARGB(255, 24, 22, 27),
+  seedColor: const Color.fromARGB(255, 28, 32, 39),
 );
 
 final themeData = ThemeData().copyWith(
-    scaffoldBackgroundColor: colorScheme.surface,
     colorScheme: colorScheme,
     textTheme: GoogleFonts.ubuntuCondensedTextTheme().copyWith(
       titleLarge: GoogleFonts.ubuntuCondensed(
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: themeData,
-      home: DataTablePaginationExample(),
+      home: const ShowListData(),
     );
   }
 }
