@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:list_show/data/data_source.dart';
@@ -15,11 +14,13 @@ class ShowListData extends StatefulWidget {
 }
 
 class _ShowListDataState extends State<ShowListData> {
+  final key = new GlobalKey<PaginatedDataTableState>();
   List<Users> userData = [];
   bool _sortAscending = true;
+  int _currentPage = 0;
   int? _sortColumnIndex;
   bool isLoading = false;
-  final url = 'http://192.168.1.39:8000/api/users/';
+  final url = 'http://192.168.1.34:8000/api/users/';
 
   Future<void> fetchData() async {
     setState(() {
@@ -32,7 +33,6 @@ class _ShowListDataState extends State<ShowListData> {
       final List<dynamic> jsonData = json.decode(response.body);
       final List<Users> userList =
           jsonData.map((user) => Users.fromMap(user)).toList();
-      print(jsonData);
 
       setState(() {
         userData.addAll(userList);
@@ -46,22 +46,11 @@ class _ShowListDataState extends State<ShowListData> {
     }
   }
 
-  // void onSort(int columnIndex, bool ascending) {
-  //   if (columnIndex == 0) {
-  //     userData.sort((user1, user2) =>
-  //         compareString(ascending, ' ${user1.id}', '${user2.id}'));
-  //   }
-  //   setState(() {
-  //     this._sortColumnIndex = columnIndex;
-  //     this._sortAscending = ascending;
-  //   });
-  // }
-
   void onSort(int columnIndex, bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
-
+      key.currentState!.pageTo(0);
       switch (columnIndex) {
         case 0: // Sort by ID
           userData.sort((a, b) => compare<int>(a.id, b.id, ascending));
@@ -82,6 +71,14 @@ class _ShowListDataState extends State<ShowListData> {
         default:
           break;
       }
+    });
+
+    _resetPagination(); // Reset to the first page after sorting
+  }
+
+  void _resetPagination() {
+    setState(() {
+      _currentPage = 0;
     });
   }
 
@@ -118,7 +115,10 @@ class _ShowListDataState extends State<ShowListData> {
         child: Container(
           color: Colors.white,
           child: PaginatedDataTable(
+            key: key,
             arrowHeadColor: Colors.white,
+            sortAscending: _sortAscending,
+            sortColumnIndex: _sortColumnIndex,
             header: const Text(
               "Pagination Table",
               style: TextStyle(color: Colors.white),
@@ -152,8 +152,7 @@ class _ShowListDataState extends State<ShowListData> {
               ),
               DataColumn(label: Text("Status")),
             ],
-            source: DataSource(userData: userData),
-            sortAscending: _sortAscending,
+            source: DataSource(userData: userData, reset: _resetPagination),
           ),
         ),
       );

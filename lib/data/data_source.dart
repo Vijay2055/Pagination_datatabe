@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:list_show/models/users.dart';
 
 class DataSource extends DataTableSource {
-  DataSource({required this.userData});
+  DataSource({required this.userData, required this.reset});
+  int current_page = 0;
 
   final List<Users> userData;
+  void Function() reset;
 
   @override
   DataRow? getRow(int index) {
@@ -13,7 +15,7 @@ class DataSource extends DataTableSource {
     }
 
     final item = userData[index];
-    print(item.city);
+
     return DataRow.byIndex(index: index, cells: [
       DataCell(Text(
         item.id.toString(),
